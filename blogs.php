@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Read our blogs!</title>
+<base href="//localhost/No1_Blog/">
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 
@@ -35,6 +36,9 @@ echo "<aside>";
 
 $i=0;
 while(isset($allusers[$i])) {
+	echo "
+		<p><a href='./blogs/selectedUser/".$allusers[$i]."/'>".$allusers[$i]."</a></p>
+		";
 	echo "<form method='post'>
 			<input type='submit' name='selectedUser' value='".$allusers[$i]."'>
 		</form>";
@@ -52,8 +56,8 @@ echo "	<p><a href='./writeBlog.php'>Blog schreiben</a></p>
 
 
 
-if(isset($_POST['selectedUser'])) {
-	$selectedUser = $_POST['selectedUser'];
+if(isset($_REQUEST['selectedUser'])) {
+	$selectedUser = $_REQUEST['selectedUser'];
 	
 } else {
 	//the currently logged in user is the standard selected user

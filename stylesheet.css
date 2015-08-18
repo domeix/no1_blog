@@ -11,18 +11,19 @@ aside {
 
 aside input {
 	width: 70px;
-	margin-bottom: 5px;
+	/*margin-bottom: 5px;*/
 }
 
 aside p {
 	background-color: #D7D7D7;
 	width: 70px;
 	text-align: center;
-
+	padding: 8px 1px;
 }
 
 aside a {
 	color: blue;
+	font-size: 95%;
 }
 
 main {
@@ -60,6 +61,6 @@ article p {
 .logout {
 	background-color: #990033;
 	color: white;
-	padding: 8px 0px;
+
 	text-decoration: none;
 }
