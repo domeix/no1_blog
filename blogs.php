@@ -18,13 +18,13 @@ $db = dbconnect();
 
 $result = $db->query("SELECT userID, username FROM user ORDER BY userID ASC;");
 
-$allusers = [];
+$allusersArr = ["keinName"];
 while ($row = mysqli_fetch_assoc($result)) {
-	array_push($allusers, $row['userID'].'-'.$row['username']);
+	array_push($allusersArr, $row['username']);
 }
 
 
-if(!isset($allusers[0])) {
+if(!isset($allusersArr[1])) {
 	die ("No users in database.");
 }
 
@@ -34,40 +34,34 @@ if(!isset($allusers[0])) {
 #---------------------------
 echo "<aside>";
 
-$i=0;
-while(isset($allusers[$i])) {
+$i=1;
+while(isset($allusersArr[$i])) {
 	echo "
-		<p><a href='./blogs/selectedUser/".$allusers[$i]."/'>".$allusers[$i]."</a></p>
+		<p class='pBlog'><a href='./blogs/selectedUserID/$i' class='aBlog'>".$allusersArr[$i]."</a></p>
 		";
-	echo "<form method='post'>
-			<input type='submit' name='selectedUser' value='".$allusers[$i]."'>
-		</form>";
 	$i++;
 }
 
-echo "	<p><a href='./writeBlog.php'>Blog schreiben</a></p>
+echo "	<p><a href='./writeBlog'>Blog schreiben</a></p>
 		<p><a href=''>anderer Link</a></p>	
 		<p>noch mehr Links</p>
 		<p>weitere Links</p>
-		<p class='logout'><a href='./logout.php' class='logout'>Logout</a></p>
+		<p class='logout'><a href='./logout' class='logout'>Logout</a></p>
 			
 	</aside>";
 #----------------------------
 
 
 
-if(isset($_REQUEST['selectedUser'])) {
-	$selectedUser = $_REQUEST['selectedUser'];
+if(isset($_GET['selectedUserID'])) {
+	$selectedUserID = $_GET['selectedUserID'];
 	
 } else {
 	//the currently logged in user is the standard selected user
-	$selectedUser = $_SESSION['currentUserID']."-".$_SESSION['currentUser'];
+	$selectedUserID = $_SESSION['currentUserID'];
 }
 
-
-
-$selectedUserID = explode("-", $selectedUser)[0];
-$selectedUserName = str_replace($selectedUserID."-", "", $selectedUser);
+$selectedUserName = $allusersArr[$selectedUserID];
 
 
 echo "<main>
@@ -86,11 +80,9 @@ while($row = mysqli_fetch_object($result)) {
 				<h4>#$blogEntryID - $heading</h4>
 				<p>$text</p>
 				
-				<form method='post' action='comment.php'>
-					<input type='hidden' name='blogEntryID' value='$blogEntryID'>
-					<input type='submit' value='comment' class='comBut'>
-				</form>
-				";
+				<p class='pComBut'><a href='comment/blogEntryID/$blogEntryID/selectedUserID/$selectedUserID' class='aComBut'>comment</a>
+
+	";
 	
 				if($hasComment) {
 					$result2 = $db->query("SELECT * FROM comments WHERE blogEntryID LIKE '$blogEntryID';");

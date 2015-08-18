@@ -19,12 +19,13 @@ function login($username, $password) {
 		return false;
 	}
 	
-	
-	//IF ABFRAGE HIER
-	session_start();
-	$_SESSION['currentUser'] = $_POST['username'];
-	$_SESSION['currentUserID'] = $resObj->userID;
-	
-	
-	return (md5($password)==$resObj->password);
+	if(md5($password)==$resObj->password){
+		session_start();
+		$_SESSION['currentUser'] = $username;
+		$_SESSION['currentUserID'] = $resObj->userID;
+		return true;
+	} else {
+		return false;
+	}
+
 }

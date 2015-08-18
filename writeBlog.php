@@ -1,24 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Write your own blog!</title>
+<base href="//localhost/No1_Blog/">
+<link rel="stylesheet" href="stylesheet.css">
+</head>
+
 <?php
 session_start();
 if(!isset($_SESSION['currentUser'])) {
 	header('location: .');
 } 
-require 'dbconnect.php';?>
+require_once 'dbconnect.php';?>
 
-<!DOCTYPE html>
-<html>
-<head>
-<title>Write your own blog!</title>
-<link rel="stylesheet" href="stylesheet.css">
-</head>
+
 
 <form method="post">
 	<input type="text" style="width: 600px; margin-bottom:5px;" name="heading" placeholder="heading"><br>
 	<textarea name="text" style="width: 600px; height: 300px; margin-bottom:5px;" placeholder="enter your text here"></textarea><br>
-	<br><br>
-
+	<br>
 	<input type="submit" value="publish">
-
 </form>
 
 <?php

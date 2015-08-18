@@ -1,13 +1,15 @@
-<IfModule mod_rewrite.c>
+AddDefaultCharset utf-8
 RewriteEngine On
 RewriteRule ^\.htaccess$ - [F]
 
 #------------
-#Deletes the last /
+# 1: page
+# 2,4: variable
+# 3,5: value
 #------------
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)/$ $1 [L]
+RewriteRule ^(.*)/(.*)/(.*)/(.*)/(.*)$ $1.php?$2=$3&$4=$5 [L,QSA]
 
 #------------
 # 1: page
@@ -16,10 +18,9 @@ RewriteRule ^(.*)/$ $1 [L]
 #------------
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)/(.*)/(.*)$ $1.php?$2=$3 [L]
+RewriteRule ^(.*)/(.*)/(.*)$ $1.php?$2=$3 [L,QSA]
 
-
-
-
-
-</IfModule>
+#------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ $1.php [L,QSA]

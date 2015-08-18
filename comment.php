@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Comment this blog</title>
+<base href="//localhost/No1_Blog/">
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 
@@ -11,21 +12,18 @@ session_start();
 if(!isset($_SESSION['currentUser'])) {
 	header('location: .');
 }
-require 'dbconnect.php';
+require_once 'dbconnect.php';
 
 //FEHLER ABFANGEN!
-$blogEntryID = $_POST['blogEntryID'];
+$blogEntryID = $_GET['blogEntryID'];
+$selectedUserID = $_GET['selectedUserID'];
 
-echo "Here you're able to comment blogentry number $blogEntryID.";
+echo "Here you're able to comment blogentry #$blogEntryID.";
 ?>
 
 <form method="post">
 <textarea name="comment" style="width: 600px; height: 300px; margin-bottom:5px;" placeholder="enter your comment here"></textarea><br>
-<br><br>
-
-<?php
-echo "<input type='hidden' name='blogEntryID' value='$blogEntryID'>";
-?>
+<br>
 
 	<input type="submit" value="comment">
 
@@ -45,7 +43,7 @@ if(isset($_POST['comment'])) {
 	if($success && $success2){
 		echo "commenting successful
 				<br>
-				<a href='.'>back</a>
+				<a href='./blogs/selectedUserID/$selectedUserID'>back</a>
 				";
 	} else {
 		echo "commenting unsuccessful";

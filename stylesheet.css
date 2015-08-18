@@ -1,5 +1,9 @@
 @CHARSET "UTF-8";
 
+a{
+	text-decoration: none;
+}
+
 aside {
 	float: left;
 	margin-top: 30px;
@@ -19,11 +23,27 @@ aside p {
 	width: 70px;
 	text-align: center;
 	padding: 8px 1px;
+	
 }
 
 aside a {
 	color: blue;
 	font-size: 95%;
+}
+
+.pBlog {
+	border-radius: 7px;
+	background-color: #8080c0;
+}
+
+.aBlog {
+	color: white;
+}
+
+.logout {
+	background-color: #990033;
+	color: white;
+
 }
 
 main {
@@ -47,8 +67,18 @@ article p {
 	margin-bottom: 5px;
 }
 
-.comBut {
-	color: green;
+.pComBut {
+	background-color:#5b5b5b;
+	border-radius:3px;
+	width: 70px;
+	text-align: center;
+	padding: 1px;
+	margin: 3px;
+}
+
+.aComBut {
+	color: yellow;
+	font-size: 75%;
 }
 
 .comment {
@@ -56,11 +86,4 @@ article p {
 	font-size: 90%;
 	background-color: #f0f0f0;
 	color: #00008d;
-}
-
-.logout {
-	background-color: #990033;
-	color: white;
-
-	text-decoration: none;
 }
