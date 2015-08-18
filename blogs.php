@@ -11,23 +11,19 @@ session_start();
 if(!isset($_SESSION['currentUser'])) {
 	header('location: .');
 }
-echo "current user: " . $_SESSION['currentUser'];
+echo "<header id='user'> 
+		<img src='Images/User1.png' class='icon'>
+		
+		" . $_SESSION['currentUser'] .
+		"
+		<div class='logout'><a href='./logout' class='logout'>Logout</a></div>
+		
+		</header>";
 
 require_once 'dbconnect.php';
-$db = dbconnect();
+$oDB = new DBconnect();
 
-$result = $db->query("SELECT userID, username FROM user ORDER BY userID ASC;");
-
-$allusersArr = ["keinName"];
-while ($row = mysqli_fetch_assoc($result)) {
-	array_push($allusersArr, $row['username']);
-}
-
-
-if(!isset($allusersArr[1])) {
-	die ("No users in database.");
-}
-
+$allusersArr = $oDB->getAllUsersArray();
 
 #---------------------------
 # navigation bar
@@ -67,7 +63,9 @@ $selectedUserName = $allusersArr[$selectedUserID];
 echo "<main>
 		<h3>$selectedUserName's blog</h3>";
 
-$result = $db->query("SELECT * FROM blogentries WHERE userID LIKE '$selectedUserID' ORDER BY blogEntryID DESC;");
+
+//get all blog entries of the selected user
+$result = $oDB->query("SELECT * FROM blogentries WHERE userID LIKE '$selectedUserID' ORDER BY blogEntryID DESC;");
 
 while($row = mysqli_fetch_object($result)) {
 	$text = $row->text;
@@ -75,17 +73,23 @@ while($row = mysqli_fetch_object($result)) {
 	$heading = $row->heading;
 	$blogEntryID = $row->blogEntryID;
 	$hasComment = $row->hasComment;
+	$datetime = $row->datetime;
 	
 	echo" <article>
 				<h4>#$blogEntryID - $heading</h4>
-				<p>$text</p>
+				<p class='datetime'>created: $datetime</p>
+				<p>$text</p>";
 				
+				if($selectedUserID==$_SESSION['currentUserID']) {		//own entries
+					echo "<a href='writeBlog/blogEntryID/$blogEntryID' class='aBlogEdit'>edit</a>";
+				}
+				echo "
 				<p class='pComBut'><a href='comment/blogEntryID/$blogEntryID/selectedUserID/$selectedUserID' class='aComBut'>comment</a>
 
-	";
+				";
 	
 				if($hasComment) {
-					$result2 = $db->query("SELECT * FROM comments WHERE blogEntryID LIKE '$blogEntryID';");
+					$result2 = $oDB->query("SELECT * FROM comments WHERE blogEntryID LIKE '$blogEntryID';");
 					echo "<details>";
 					
 					while($row = mysqli_fetch_object($result2)) {
@@ -94,21 +98,27 @@ while($row = mysqli_fetch_object($result)) {
 						$commentID = $row->commentID;
 						$commentUserID = $row->userID;
 						
-						$result3 = $db->query("SELECT username FROM user WHERE userID LIKE '$commentUserID';");
+						$result3 = $oDB->getUser($commentUserID);
 						$commentUserName = mysqli_fetch_object($result3)->username;
 						
 						echo "<p class='comment'>
 								<b>#$commentID by $commentUserName:</b> <br>
-								$commentText
-								</p>";
+								$commentText";
+						
+						if($_SESSION['currentUserID']==$commentUserID) {	//own comments
+							echo "<a href='comment/commentID/$commentID/selectedUserID/$selectedUserID' class='aComEdit'>edit</a>";
+						}
+								
+						echo "		</p>";
 						
 					}
 					
 					
 					echo "</details>";
 				}
-				
+	
 				echo "
+																	
 			</article>";
 }
 echo "</main>";

@@ -43,7 +43,6 @@ aside a {
 .logout {
 	background-color: #990033;
 	color: white;
-
 }
 
 main {
@@ -59,7 +58,13 @@ article {
 }
 
 article h4 {
-	margin-bottom: 5px;
+	margin-bottom: 0px;
+}
+
+.datetime {
+	margin-bottom: 3px;
+	font-size: 70%;
+	font-weight: bold;
 }
 
 article p {
@@ -86,4 +91,28 @@ article p {
 	font-size: 90%;
 	background-color: #f0f0f0;
 	color: #00008d;
+}
+
+.aComEdit, .aBlogEdit {
+	color: green;
+	font-size: 75%;
+	float: right;
+	margin-right: 3px;
+}
+
+.aBlogEdit {
+	font-weight: bold;
+}
+
+.icon {
+	height: 30px;
+	width: auto;
+}
+
+#user {
+	padding: 5px;
+	background-color: #e7ff5b;
+	float: right;
+	font-family: fantasy;
+	text-align: center;
 }

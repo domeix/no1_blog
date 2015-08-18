@@ -11,8 +11,8 @@ require_once 'dbconnect.php';
  * false, if logindata is wrong
  */
 function login($username, $password) {
-	$db = dbconnect();
-	$result = $db->query("SELECT * FROM user WHERE username LIKE '$username' LIMIT 1;");
+	$oDB = new DBconnect();
+	$result = $oDB->query("SELECT * FROM user WHERE username LIKE '$username';");
 	$resObj = mysqli_fetch_object($result);
 	
 	if(!isset($resObj->password)) {
