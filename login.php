@@ -20,7 +20,7 @@
 if(isset($_POST["username"]) && isset($_POST["password"])) {
 	require_once 'loginFunc.php';
 	if(login($_POST["username"],$_POST["password"])) {	//logindata correct
-		header("location:main.php");
+		header("location:main");
 	} else {											//logindata wrong
 		echo "please check your login";
 	}

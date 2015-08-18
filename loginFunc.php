@@ -1,5 +1,5 @@
 <?php
-require 'dbconnect.php';
+require_once 'dbconnect.php';
 
 /**checks logindata,
  * adds user-information into session-variable, if login correct
