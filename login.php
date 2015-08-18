@@ -6,17 +6,44 @@
 </head>
 
 <form method="post">
-
-	<label for="username">Username: </label>
-	<input type="text" name="username" autocomplete="off"><br>
-	<label for="password">Password: </label>
-	<input type="password" name="password"><br>
-	<input type="submit" value="login">
-
+	<table>
+	<tbody>
+		<tr>
+			<td>
+				<label for="username">Username: </label>
+			</td>
+			<td>
+				<input type="text" name="username" autocomplete="off">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="password">Password: </label>
+			</td>
+			<td>
+				<input type="password" name="password">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="submit" value="login">
+			</td>
+		</tr>
+	</tbody>
+	</table>
 </form>
 
 
 <?php
+
+
+require_once 'dbconnect.php';
+$oDB = new DBconnect();
+$users = $oDB->getAllUsersArray();
+array_shift($users);
+echo "The users are: " . implode(", ", $users);
+
+
 if(isset($_POST["username"]) && isset($_POST["password"])) {
 	require_once 'loginFunc.php';
 	if(login($_POST["username"],$_POST["password"])) {	//logindata correct

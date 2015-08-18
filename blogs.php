@@ -13,10 +13,10 @@ if(!isset($_SESSION['currentUser'])) {
 }
 echo "<header id='user'> 
 		<img src='Images/User1.png' class='icon'>
-		
+		<p id='username'>
 		" . $_SESSION['currentUser'] .
-		"
-		<div class='logout'><a href='./logout' class='logout'>Logout</a></div>
+		"</p>
+		<p class='plogout' id='logouttop'><a href='./logout' class='alogout'>Logout</a></p>
 		
 		</header>";
 
@@ -42,7 +42,7 @@ echo "	<p><a href='./writeBlog'>Blog schreiben</a></p>
 		<p><a href=''>anderer Link</a></p>	
 		<p>noch mehr Links</p>
 		<p>weitere Links</p>
-		<p class='logout'><a href='./logout' class='logout'>Logout</a></p>
+		<p class='plogout'><a href='./logout' class='alogout'>Logout</a></p>
 			
 	</aside>";
 #----------------------------
@@ -75,10 +75,11 @@ while($row = mysqli_fetch_object($result)) {
 	$hasComment = $row->hasComment;
 	$datetime = $row->datetime;
 	
+	//Blogentries
 	echo" <article>
 				<h4>#$blogEntryID - $heading</h4>
 				<p class='datetime'>created: $datetime</p>
-				<p>$text</p>";
+				<p class='blogentries'>$text</p>";
 				
 				if($selectedUserID==$_SESSION['currentUserID']) {		//own entries
 					echo "<a href='writeBlog/blogEntryID/$blogEntryID' class='aBlogEdit'>edit</a>";
