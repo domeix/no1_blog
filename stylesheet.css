@@ -1,0 +1,65 @@
+@CHARSET "UTF-8";
+
+aside {
+	float: left;
+	margin-top: 30px;
+	margin-right: 20px;
+	
+	font-family: sans-serif;
+	
+}
+
+aside input {
+	width: 70px;
+	margin-bottom: 5px;
+}
+
+aside p {
+	background-color: #D7D7D7;
+	width: 70px;
+	text-align: center;
+
+}
+
+aside a {
+	color: blue;
+}
+
+main {
+	float: left;
+	font-family: sans-serif;
+	width:60%;
+	
+}
+
+article {
+	margin-bottom: 0px;
+	background-color: #E8E8E8;
+}
+
+article h4 {
+	margin-bottom: 5px;
+}
+
+article p {
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+
+.comBut {
+	color: green;
+}
+
+.comment {
+	font-family: fantasy;
+	font-size: 90%;
+	background-color: #f0f0f0;
+	color: #00008d;
+}
+
+.logout {
+	background-color: #990033;
+	color: white;
+	padding: 8px 0px;
+	text-decoration: none;
+}
