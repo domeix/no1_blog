@@ -9,9 +9,7 @@ class DBconnect {
 	function query($string) {
 		return $this->db->query($string);
 	}
-	
-	
-	
+		
 	#------------------------------------
 	function createDatabase() {
 		
@@ -102,20 +100,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 		
 	}
 	#-------------------------------------
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+			
 	/**
 	 * @return all users in an array starting with 1!
 	 */
@@ -149,57 +134,121 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 		return mysqli_fetch_object($result)->commentText;
 	}
 	
-	function saveComment($blogEntryID, $commentText, $edit, $commentID) {
-		$userID = $_SESSION['currentUserID'];
-
-		if($edit) {
-			$success = $this->query("UPDATE comments SET commentText = '$commentText' WHERE commentID LIKE '$commentID';");
-			$success2 = true;
-		} else {
-			$success = $this->query("INSERT INTO comments (blogEntryID, commentText, userID)  VALUES ('$blogEntryID', '$commentText', '$userID');");
-			$success2 = $this->query("UPDATE blogentries SET hasComment = TRUE WHERE blogEntryID LIKE '$blogEntryID';");
-		}
-		
-		return ($success&&$success2);		
-	}
-	
-	
-	function copyBlogEntry($blogEntryID) {
-		$result = $this->query("SELECT rowID FROM blogentries WHERE blogEntryID LIKE '$blogEntryID' AND active;");
+	function copyComment($commentID) {
+		$result = $this->query("SELECT rowID FROM comments WHERE commentID LIKE '$commentID' AND active;");
 		$oldRowID = mysqli_fetch_object($result)->rowID;
+		echo $oldRowID;
 		$success = $this->query("
-			INSERT INTO blogentries (blogEntryID, active, heading, text, userID, creationDate, hasComment)
-			SELECT blogEntryID, 1, heading, text, userID, creationDate, hasComment FROM blogentries
-			WHERE blogEntryID LIKE '$blogEntryID' AND active;
-		");
-		if($success){
-			$success = $this->query("UPDATE blogentries SET active = 0 WHERE rowID LIKE '$oldRowID';");
+			INSERT INTO comments (commentID, blogEntryID, commentText, userID, active) VALUES 
+				(SELECT commentID, blogEntryID, commentText, userID, 1 FROM comments WHERE rowID = '$oldRowID');
+				");
+		if($success) {
+			echo "3";
+			$success = $this->query("UPDATE comments SET active = 0 WHERE rowID = $oldRowID;");
 		}
 		return $success;
 	}
 	
+	function saveComment($blogEntryID, $commentText, $edit, $commentID) {
+		$userID = $_SESSION['currentUserID'];
+
+		if($edit) {
+			$success = $this->copyComment($commentID);
+			
+			if($success) {
+				echo "1";
+				$success = $this->query("UPDATE comments SET commentText = '$commentText' WHERE commentID LIKE '$commentID' and active;");
+			}
+			
+		} else {
+			
+			$commentID = $this->getNextIndex("comments");
+			
+			$success = $this->query("INSERT INTO comments (blogEntryID, commentText, userID, commentID)  VALUES ('$blogEntryID', '$commentText', '$userID', '$commentID');");
+			if($success) {
+				$success = $this->query("UPDATE blogentries SET hasComment = TRUE WHERE blogEntryID LIKE '$blogEntryID' and active;");
+			}
+		}
+		
+		return $success;		
+	}
+	
+	function copyBlogEntry($blogEntryID) {
+		$result = $this->query("SELECT rowID FROM blogentries WHERE blogEntryID LIKE '$blogEntryID' AND active;");
+		$oldRowID = mysqli_fetch_object($result)->rowID;
+		echo $oldRowID;
+		$success = $this->query("
+			INSERT INTO blogentries (blogEntryID, heading, text, userID, creationDate, hasComment) VALUES
+				(SELECT b.blogEntryID, b.heading, b.text, b.userID, b.creationDate, b.hasComment FROM blogentries as b
+					WHERE b.rowID = '$oldRowID');
+		");
+		if($success){
+			echo "hier";	
+			$success = $this->query("UPDATE blogentries SET active = 0 WHERE rowID LIKE '$oldRowID';");
+		}
+		return $success;
+	}
 	
 	function saveBlogEntry($heading, $text, $edit, $blogEntryID) {
 		$userID = $_SESSION['currentUserID'];
 
 		if($edit) {
 			$success = $this->copyBlogEntry($blogEntryID);
-		
+			
 			if($success){
 				$success = $this->query("UPDATE blogentries SET heading = '$heading', text = '$text' WHERE blogEntryID LIKE '$blogEntryID' AND active;");
 			}
 				
 		} else {
-			$success = $this->query("INSERT INTO blogentries (heading, text, userID)  VALUES ('$heading', '$text', '$userID');");
+			
+			$blogEntryID = $this->getNextIndex("blogentries");
+			
+			$success = $this->query("INSERT INTO blogentries (blogEntryID, heading, text, userID)  VALUES ('$blogEntryID', '$heading', '$text', '$userID');");
 		}
 		
 		return $success;
 	}
-	
 	
 	function getBlogEntry($blogEntryID) {
 		$result = $this->query("SELECT * FROM blogentries WHERE blogEntryID LIKE '$blogEntryID' AND active;");
 		return mysqli_fetch_object($result);
 	}
 	
+	function getNextIndex($table) {
+		$result = $this->query("SELECT next$table"."ID FROM indices LIMIT 1;");
+		return mysqli_fetch_array($result)[0];
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
