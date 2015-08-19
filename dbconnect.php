@@ -10,8 +10,11 @@ class DBconnect {
 		return $this->db->query($string);
 	}
 		
-	#------------------------------------
-	function createDatabase() {
+	/**
+	 * creates Database as designed in mysqlWorkspace
+	 * 19.08.15 - 11.00
+	 */		
+ 	function createDatabase() {
 		
 		$this->query("
 -- MySQL Workbench Forward Engineering
@@ -118,22 +121,39 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 		
 		return $allusersArr;
 	}
-	
+	/**
+	 * @param int $userID
+	 * @return string username
+	 */
 	function getUsername($userID) {
 		$result = $this->query("SELECT username FROM user WHERE userID LIKE '$userID';");
 		return mysqli_fetch_object($result)->username;
 	}
 	
+	/**
+	 * @param int $commentID
+	 * @return int blogEntryID
+	 */
 	function getBlogEntryID($commentID) {
 		$result = $this->query("SELECT blogEntryID FROM comments WHERE commentID LIKE '$commentID' AND active;");
 		return mysqli_fetch_object($result)->blogEntryID;
 	}
 	
+	/**
+	 * @param int $commentID
+	 * @return string commentText
+	 */
 	function getCommentText($commentID) {
 		$result = $this->query("SELECT commentText FROM comments WHERE commentID LIKE '$commentID' AND active;");
 		return mysqli_fetch_object($result)->commentText;
 	}
 	
+	/**
+	 * creates new comment, with different rowID, modificationDate
+	 * deactivates old comment
+	 * @param int $commentID
+	 * @return true, if copying successful
+	 */
 	function copyComment($commentID) {
 		$result = $this->query("SELECT rowID FROM comments WHERE commentID LIKE '$commentID' AND active;");
 		$oldRowID = mysqli_fetch_object($result)->rowID;
@@ -147,16 +167,32 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 		return $success;
 	}
 	
+	/**
+	 * 
+	 * @param int $blogEntryID
+	 * @param string $commentText
+	 * @param boolean $edit
+	 * @param int $commentID
+	 * @return true, if saving successful 
+	 * OR false, if not (e.g. no change, missing db-connection etc.)
+	 */
 	function saveComment($blogEntryID, $commentText, $edit, $commentID) {
 		$userID = $_SESSION['currentUserID'];
 
 		if($edit) {
-			$success = $this->copyComment($commentID);
 			
-			if($success) {
-				$success = $this->query("UPDATE comments SET commentText = '$commentText' WHERE commentID LIKE '$commentID' and active;");
+			$oldCommentText = $this->getCommentText($commentID);
+			if($commentText==$oldCommentText) {
+				$success = false;
+				
+			} else {
+				
+				$success = $this->copyComment($commentID);
+				
+				if($success) {
+					$success = $this->query("UPDATE comments SET commentText = '$commentText' WHERE commentID LIKE '$commentID' and active;");
+				}
 			}
-			
 		} else {
 			
 			$commentID = $this->getNextIndex("comments");
@@ -170,6 +206,12 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 		return $success;		
 	}
 	
+	/**
+	 * creates new blogEntry, with different rowID, modificationDate
+	 * deactivates old blogEntry
+	 * @param int $blogEntryID
+	 * @return true, if copying successful
+	 */
 	function copyBlogEntry($blogEntryID) {
 		$result = $this->query("SELECT rowID FROM blogentries WHERE blogEntryID LIKE '$blogEntryID' AND active;");
 		$oldRowID = mysqli_fetch_object($result)->rowID;
@@ -189,12 +231,19 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 		$userID = $_SESSION['currentUserID'];
 
 		if($edit) {
-			$success = $this->copyBlogEntry($blogEntryID);
 			
-			if($success){
-				$success = $this->query("UPDATE blogentries SET heading = '$heading', text = '$text' WHERE blogEntryID LIKE '$blogEntryID' AND active;");
-			}
+			$oldBlogEntry = $this->getBlogEntry($blogEntryID);
+			if($heading==$oldBlogEntry->heading && $text==$oldBlogEntry->text) {
+				$success = false;
 				
+			} else {
+			
+				$success = $this->copyBlogEntry($blogEntryID);
+				
+				if($success){
+					$success = $this->query("UPDATE blogentries SET heading = '$heading', text = '$text' WHERE blogEntryID LIKE '$blogEntryID' AND active;");
+				}
+			}	
 		} else {
 			
 			$blogEntryID = $this->getNextIndex("blogentries");
@@ -205,11 +254,21 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 		return $success;
 	}
 	
+	/**
+	 * @param int $blogEntryID
+	 * @return mysqli_fetch_object
+	 */
 	function getBlogEntry($blogEntryID) {
 		$result = $this->query("SELECT * FROM blogentries WHERE blogEntryID LIKE '$blogEntryID' AND active;");
 		return mysqli_fetch_object($result);
 	}
 	
+	/**
+	 * returns next index of the table $table
+	 * increments the next index
+	 * @param string $table
+	 * @return int nextIndex
+	 */
 	function getNextIndex($table) {
 		$result = $this->query("SELECT next"."$table"."ID FROM indices LIMIT 1;");
 		$index = mysqli_fetch_array($result)[0];
