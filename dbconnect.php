@@ -10,6 +10,112 @@ class DBconnect {
 		return $this->db->query($string);
 	}
 	
+	
+	
+	#------------------------------------
+	function createDatabase() {
+		
+		$this->query("
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema blog
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema blog
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `blog` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `blog` ;
+
+-- -----------------------------------------------------
+-- Table `blog`.`user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `blog`.`user` (
+  `rowID` INT NOT NULL AUTO_INCREMENT COMMENT '',
+  `userID` INT NOT NULL COMMENT '',
+  `active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '',
+  `username` VARCHAR(50) NOT NULL COMMENT '',
+  `password` VARCHAR(32) NOT NULL COMMENT '',
+  `email` VARCHAR(200) NULL COMMENT '',
+  `modificationDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
+  PRIMARY KEY (`rowID`)  COMMENT '');
+
+
+-- -----------------------------------------------------
+-- Table `blog`.`blogentries`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `blog`.`blogentries` (
+  `rowID` INT NOT NULL AUTO_INCREMENT COMMENT '',
+  `blogEntryID` INT NOT NULL COMMENT '',
+  `active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '',
+  `heading` VARCHAR(100) NOT NULL COMMENT '',
+  `text` TEXT(10000) NOT NULL COMMENT '',
+  `userID` INT NOT NULL COMMENT '',
+  `creationDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
+  `modificationDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
+  `hasComment` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '',
+  PRIMARY KEY (`rowID`)  COMMENT '',
+  INDEX `username_idx` (`userID` ASC)  COMMENT '')
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `blog`.`comments`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `blog`.`comments` (
+  `rowID` INT NOT NULL AUTO_INCREMENT COMMENT '',
+  `commentID` INT NOT NULL COMMENT '',
+  `blogEntryID` INT NOT NULL COMMENT '',
+  `commentText` VARCHAR(1000) NOT NULL COMMENT '',
+  `userID` INT NOT NULL COMMENT '',
+  `active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '',
+  `modificationDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
+  INDEX `userid_idx` (`userID` ASC)  COMMENT '',
+  INDEX `blogentryID_idx` (`blogEntryID` ASC)  COMMENT '',
+  PRIMARY KEY (`rowID`)  COMMENT '')
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `blog`.`indices`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `blog`.`indices` (
+  `id` INT NOT NULL COMMENT '',
+  `nextUserID` INT NULL COMMENT '',
+  `nextBlogEntryID` INT NULL COMMENT '',
+  `nextCommentID` INT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '')
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+				
+				");
+		
+		
+	}
+	#-------------------------------------
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * @return all users in an array starting with 1!
 	 */
@@ -28,8 +134,9 @@ class DBconnect {
 		return $allusersArr;
 	}
 	
-	function getUser($userID) {
-		return $this->query("SELECT username FROM user WHERE userID LIKE '$userID';");
+	function getUsername($userID) {
+		$result = $this->query("SELECT username FROM user WHERE userID LIKE '$userID';");
+		return mysqli_fetch_object($result)->username;
 	}
 	
 	function getBlogEntryID($commentID) {
@@ -58,13 +165,15 @@ class DBconnect {
 	
 	
 	function copyBlogEntry($blogEntryID) {
-		$success = $this->query("UPDATE blogentries SET active = 0 WHERE blogEntryID LIKE '$blogEntryID';");
-		if($success) {
-			$success = $this->query("
+		$result = $this->query("SELECT rowID FROM blogentries WHERE blogEntryID LIKE '$blogEntryID' AND active;");
+		$oldRowID = mysqli_fetch_object($result)->rowID;
+		$success = $this->query("
 			INSERT INTO blogentries (blogEntryID, active, heading, text, userID, creationDate, hasComment)
 			SELECT blogEntryID, 1, heading, text, userID, creationDate, hasComment FROM blogentries
-			WHERE blogEntryID LIKE '$blogEntryID';
-			");
+			WHERE blogEntryID LIKE '$blogEntryID' AND active;
+		");
+		if($success){
+			$success = $this->query("UPDATE blogentries SET active = 0 WHERE rowID LIKE '$oldRowID';");
 		}
 		return $success;
 	}
@@ -73,12 +182,9 @@ class DBconnect {
 	function saveBlogEntry($heading, $text, $edit, $blogEntryID) {
 		$userID = $_SESSION['currentUserID'];
 
-		
-		
 		if($edit) {
-
 			$success = $this->copyBlogEntry($blogEntryID);
-			
+		
 			if($success){
 				$success = $this->query("UPDATE blogentries SET heading = '$heading', text = '$text' WHERE blogEntryID LIKE '$blogEntryID' AND active;");
 			}
@@ -92,7 +198,7 @@ class DBconnect {
 	
 	
 	function getBlogEntry($blogEntryID) {
-		$result = $this->query("SELECT * FROM blogentries WHERE blogEntryID LIKE '$blogEntryID';");
+		$result = $this->query("SELECT * FROM blogentries WHERE blogEntryID LIKE '$blogEntryID' AND active;");
 		return mysqli_fetch_object($result);
 	}
 	

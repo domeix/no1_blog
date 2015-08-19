@@ -81,7 +81,7 @@ while($row = mysqli_fetch_object($result)) {
 				<h4>#$blogEntryID - $heading</h4>
 				<p class='datetime'>created: $creationDate";
 	if($modificationDate!=$creationDate) {
-		echo ", modificated: $modificationDate";
+		echo ", modificated: $modificationDate (<a href='entryhistory/blogEntryID/$blogEntryID'>show history</a>)";
 	}
 	echo"	</p>	<p class='blogentries'>$text</p>";
 				
@@ -102,9 +102,7 @@ while($row = mysqli_fetch_object($result)) {
 						$commentText = nl2br($commentText); //Zeilenumbruch
 						$commentID = $row->commentID;
 						$commentUserID = $row->userID;
-						
-						$result3 = $oDB->getUser($commentUserID);
-						$commentUserName = mysqli_fetch_object($result3)->username;
+						$commentUserName = $oDB->getUsername($commentUserID);
 						
 						echo "<p class='comment'>
 								<b>#$commentID by $commentUserName:</b> <br>
