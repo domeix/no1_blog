@@ -56,11 +56,32 @@ class DBconnect {
 		return ($success&&$success2);		
 	}
 	
+	
+	function copyBlogEntry($blogEntryID) {
+		$success = $this->query("UPDATE blogentries SET active = 0 WHERE blogEntryID LIKE '$blogEntryID';");
+		if($success) {
+			$success = $this->query("
+			INSERT INTO blogentries (blogEntryID, active, heading, text, userID, creationDate, hasComment)
+			SELECT blogEntryID, 1, heading, text, userID, creationDate, hasComment FROM blogentries
+			WHERE blogEntryID LIKE '$blogEntryID';
+			");
+		}
+		return $success;
+	}
+	
+	
 	function saveBlogEntry($heading, $text, $edit, $blogEntryID) {
 		$userID = $_SESSION['currentUserID'];
 
+		
+		
 		if($edit) {
-			$success = $this->query("UPDATE blogentries SET heading = '$heading', text = '$text' WHERE blogEntryID LIKE '$blogEntryID';");
+
+			$success = $this->copyBlogEntry($blogEntryID);
+			
+			if($success){
+				$success = $this->query("UPDATE blogentries SET heading = '$heading', text = '$text' WHERE blogEntryID LIKE '$blogEntryID' AND active;");
+			}
 				
 		} else {
 			$success = $this->query("INSERT INTO blogentries (heading, text, userID)  VALUES ('$heading', '$text', '$userID');");

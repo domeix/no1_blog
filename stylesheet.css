@@ -7,6 +7,9 @@ td {
 	padding: 2px;
 }
 
+.loginput {
+	width: 150px;
+}
 
 
 /*Blogs*/
@@ -114,6 +117,7 @@ article p {
 .aComEdit, .aBlogEdit {
 	color: green;
 	font-size: 75%;
+	font-family: sans-serif;
 	float: right;
 	margin-right: 3px;
 }
@@ -132,7 +136,7 @@ article p {
 	padding: 5px;
 	background-color: #e7ff5b;
 	float: right;
-	font-family: fantasy;
+	font-family: sans-serif;
 	text-align: center;
 }
 

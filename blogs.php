@@ -65,7 +65,7 @@ echo "<main>
 
 
 //get all blog entries of the selected user
-$result = $oDB->query("SELECT * FROM blogentries WHERE userID LIKE '$selectedUserID' ORDER BY blogEntryID DESC;");
+$result = $oDB->query("SELECT * FROM blogentries WHERE userID LIKE '$selectedUserID' AND active ORDER BY blogEntryID DESC;");
 
 while($row = mysqli_fetch_object($result)) {
 	$text = $row->text;
@@ -73,13 +73,17 @@ while($row = mysqli_fetch_object($result)) {
 	$heading = $row->heading;
 	$blogEntryID = $row->blogEntryID;
 	$hasComment = $row->hasComment;
-	$datetime = $row->datetime;
+	$creationDate = $row->creationDate;
+	$modificationDate = $row->modificationDate;
 	
 	//Blogentries
 	echo" <article>
 				<h4>#$blogEntryID - $heading</h4>
-				<p class='datetime'>created: $datetime</p>
-				<p class='blogentries'>$text</p>";
+				<p class='datetime'>created: $creationDate";
+	if($modificationDate!=$creationDate) {
+		echo ", modificated: $modificationDate";
+	}
+	echo"	</p>	<p class='blogentries'>$text</p>";
 				
 				if($selectedUserID==$_SESSION['currentUserID']) {		//own entries
 					echo "<a href='writeBlog/blogEntryID/$blogEntryID' class='aBlogEdit'>edit</a>";

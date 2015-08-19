@@ -13,7 +13,7 @@
 				<label for="username">Username: </label>
 			</td>
 			<td>
-				<input type="text" name="username" autocomplete="off">
+				<input type="text" name="username" autocomplete="off" class="loginput">
 			</td>
 		</tr>
 		<tr>
@@ -21,7 +21,7 @@
 				<label for="password">Password: </label>
 			</td>
 			<td>
-				<input type="password" name="password">
+				<input type="password" name="password" class="loginput">
 			</td>
 		</tr>
 		<tr>
