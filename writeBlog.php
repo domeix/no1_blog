@@ -30,18 +30,17 @@ if($edit) {
 	$blogEntry = $oDB->getBlogEntry($blogEntryID);
 }
 ?>
-
-
-<form method="post">
-	<input type="text" style="width: 600px; margin-bottom:5px;" name="heading" placeholder="heading" autocomplete="off"
-		<?php if($edit){ echo 'value="'.$blogEntry->heading.'"';}?>
-	><br>
-	<textarea name="text" style="width: 600px; height: 300px; margin-bottom:5px;" placeholder="enter your text here"
-		><?php if($edit){ echo $blogEntry->text;}?></textarea><br>
-	<br>
-	<input type="submit" value="publish">
-</form>
-
+<div class='writingarea'>
+	<form method="post">
+		<input type="text" style="width: 600px; margin-bottom: 5px;"
+			name="heading" placeholder="heading" autocomplete="off"
+			<?php if($edit){ echo 'value="'.$blogEntry->heading.'"';}?>><br>
+		<textarea name="text"
+			style="width: 600px; height: 300px; margin-bottom: 5px;"
+			placeholder="enter your text here"><?php if($edit){ echo $blogEntry->text;}?></textarea>
+		<br> <br> <input type="submit" value="publish">
+	</form>
+</div>
 <?php
 
 if(isset($_POST['text']) && isset($_POST['heading'])) {

@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 
-
+<div class="writingarea">
 <?php
 session_start();
 if(!isset($_SESSION['currentUser'])) {
@@ -14,6 +14,7 @@ if(!isset($_SESSION['currentUser'])) {
 }
 require_once 'dbconnect.php';
 $oDB = new DBconnect();
+
 
 
 //check, wether the comment is created or edited
@@ -39,28 +40,26 @@ if($edit) {
 } else {
 	echo "comment ";
 }
-echo "blogentry #$blogEntryID.";
+echo "blogEntry #$blogEntryID.";
 
 
 if(isset($_POST['comment'])) {
 	$success = $oDB->saveComment($blogEntryID, $_POST['comment'], $edit, $commentID);
 }
+?><br><br>
+	<form method="post">
+		<textarea name="comment"
+			style="width: 600px; height: 300px; margin-bottom: 5px;"
+			placeholder="enter your comment here">
+<?php
+if ($edit) {
+	echo $oDB->getCommentText ( $commentID );
+}
 ?>
-
-<form method="post">
-<textarea name="comment" style="width: 600px; height: 300px; margin-bottom:5px;" placeholder="enter your comment here">
-<?php 
-	if($edit) {
-		echo $oDB->getCommentText($commentID);
-	}
-?>
-</textarea><br>
-<br>
-
-	<input type="submit" value="save">
-
-</form>
-
+</textarea>
+		<br> <br> <input type="submit" value="save">
+	</form>
+</div>
 <?php 
 if(isset($_POST['comment'])) {
 	if($success){

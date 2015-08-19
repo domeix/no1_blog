@@ -231,19 +231,26 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 		$userID = $_SESSION['currentUserID'];
 
 		if($edit) {
-			
 			$oldBlogEntry = $this->getBlogEntry($blogEntryID);
-			if($heading==$oldBlogEntry->heading && $text==$oldBlogEntry->text) {
-				$success = false;
-				
-			} else {
+			echo $oldBlogEntry->heading . $oldBlogEntry->text;
+			echo "<br>"
+					
 			
+			
+			##------------------------FEEEEEHELER
+			
+			;
+			if($heading==$oldBlogEntry->heading && $text==$oldBlogEntry->text) {
+				echo "hier";
+				$success = false;				
+			}else{}
+			echo "hallo";
 				$success = $this->copyBlogEntry($blogEntryID);
 				
-				if($success){
+				if($success) {
 					$success = $this->query("UPDATE blogentries SET heading = '$heading', text = '$text' WHERE blogEntryID LIKE '$blogEntryID' AND active;");
 				}
-			}	
+				
 		} else {
 			
 			$blogEntryID = $this->getNextIndex("blogentries");

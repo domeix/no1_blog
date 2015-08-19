@@ -1,5 +1,18 @@
 @CHARSET "UTF-8";
 
+/*Comment, writeBlog*/
+.writingarea {
+	font-family: sans-serif;
+	padding: 5px;
+	background-color: #8080c0;
+	float: left;
+}
+
+textarea {
+	font-family: sans-serif;
+
+}
+
 /*Login*/
 
 td {
