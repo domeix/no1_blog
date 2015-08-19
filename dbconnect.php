@@ -125,25 +125,23 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	}
 	
 	function getBlogEntryID($commentID) {
-		$result = $this->query("SELECT blogEntryID FROM comments WHERE commentID LIKE '$commentID';");
+		$result = $this->query("SELECT blogEntryID FROM comments WHERE commentID LIKE '$commentID' AND active;");
 		return mysqli_fetch_object($result)->blogEntryID;
 	}
 	
 	function getCommentText($commentID) {
-		$result = $this->query("SELECT commentText FROM comments WHERE commentID LIKE '$commentID';");
+		$result = $this->query("SELECT commentText FROM comments WHERE commentID LIKE '$commentID' AND active;");
 		return mysqli_fetch_object($result)->commentText;
 	}
 	
 	function copyComment($commentID) {
 		$result = $this->query("SELECT rowID FROM comments WHERE commentID LIKE '$commentID' AND active;");
 		$oldRowID = mysqli_fetch_object($result)->rowID;
-		echo $oldRowID;
 		$success = $this->query("
-			INSERT INTO comments (commentID, blogEntryID, commentText, userID, active) VALUES 
-				(SELECT commentID, blogEntryID, commentText, userID, 1 FROM comments WHERE rowID = '$oldRowID');
+			INSERT INTO comments (commentID, blogEntryID, commentText, userID, creationDate)
+				(SELECT commentID, blogEntryID, commentText, userID, creationDate FROM comments WHERE rowID = '$oldRowID');
 				");
 		if($success) {
-			echo "3";
 			$success = $this->query("UPDATE comments SET active = 0 WHERE rowID = $oldRowID;");
 		}
 		return $success;
@@ -156,7 +154,6 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 			$success = $this->copyComment($commentID);
 			
 			if($success) {
-				echo "1";
 				$success = $this->query("UPDATE comments SET commentText = '$commentText' WHERE commentID LIKE '$commentID' and active;");
 			}
 			
@@ -176,14 +173,13 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	function copyBlogEntry($blogEntryID) {
 		$result = $this->query("SELECT rowID FROM blogentries WHERE blogEntryID LIKE '$blogEntryID' AND active;");
 		$oldRowID = mysqli_fetch_object($result)->rowID;
-		echo $oldRowID;
 		$success = $this->query("
-			INSERT INTO blogentries (blogEntryID, heading, text, userID, creationDate, hasComment) VALUES
-				(SELECT b.blogEntryID, b.heading, b.text, b.userID, b.creationDate, b.hasComment FROM blogentries as b
-					WHERE b.rowID = '$oldRowID');
+			INSERT INTO blogentries (blogEntryID, heading, text, userID, creationDate, hasComment)
+			 	(SELECT blogEntryID, heading, text, userID, creationDate, hasComment 
+				FROM blogentries
+				WHERE rowID = '$oldRowID');
 		");
 		if($success){
-			echo "hier";	
 			$success = $this->query("UPDATE blogentries SET active = 0 WHERE rowID LIKE '$oldRowID';");
 		}
 		return $success;
@@ -215,8 +211,10 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	}
 	
 	function getNextIndex($table) {
-		$result = $this->query("SELECT next$table"."ID FROM indices LIMIT 1;");
-		return mysqli_fetch_array($result)[0];
+		$result = $this->query("SELECT next"."$table"."ID FROM indices LIMIT 1;");
+		$index = mysqli_fetch_array($result)[0];
+		$this->query("UPDATE indices SET next"."$table"."ID = ($index+1) WHERE 1;");
+		return $index;
 	}
 	
 	

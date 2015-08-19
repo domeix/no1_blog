@@ -94,18 +94,28 @@ while($row = mysqli_fetch_object($result)) {
 				";
 	
 				if($hasComment) {
-					$result2 = $oDB->query("SELECT * FROM comments WHERE blogEntryID LIKE '$blogEntryID';");
+					$result2 = $oDB->query("SELECT * FROM comments WHERE blogEntryID LIKE '$blogEntryID' AND active ORDER BY commentID ASC;");
 					echo "<details>";
 					
-					while($row = mysqli_fetch_object($result2)) {
-						$commentText = $row->commentText;
+					while($row2 = mysqli_fetch_object($result2)) {
+						$commentText = $row2->commentText;
 						$commentText = nl2br($commentText); //Zeilenumbruch
-						$commentID = $row->commentID;
-						$commentUserID = $row->userID;
+						$commentID = $row2->commentID;
+						$commentUserID = $row2->userID;
 						$commentUserName = $oDB->getUsername($commentUserID);
+						$commentCreationDate = $row2->creationDate;
+						$commentModificationDate = $row2->modificationDate;
+						
 						
 						echo "<p class='comment'>
 								<b>#$commentID by $commentUserName:</b> <br>
+								";
+						
+						if($commentCreationDate != $commentModificationDate) {
+							echo "<span class='datetime'>(<a href='commenthistory/commentID/$commentID/selectedUserID/$selectedUserID'>show history</a>)</span><br>";
+						}
+						
+						echo "
 								$commentText";
 						
 						if($_SESSION['currentUserID']==$commentUserID) {	//own comments

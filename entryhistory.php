@@ -48,7 +48,7 @@ while($row = mysqli_fetch_object($result)) {
 	
 }
 
-echo "<a href='blogs/userID/$userID'>back</a>
+echo "<a href='blogs/selectedUserID/$userID'>back</a>
 
 </main>";
 
