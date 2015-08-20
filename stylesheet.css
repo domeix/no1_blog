@@ -8,6 +8,21 @@
 	float: left;
 }
 
+#successful{
+	background-color: #b6e0af;
+}
+
+#unsuccessful{
+	background-color: #e1aeae;
+}
+
+.successinfo{
+	font-size: 90%;
+	margin-top: 2px;
+	padding: 2px;
+	float: left;
+}
+
 textarea {
 	font-family: sans-serif;
 
@@ -29,6 +44,7 @@ td {
 
 a{
 	text-decoration: none;
+	color: #0000d5;
 }
 
 aside {
@@ -168,3 +184,19 @@ article p {
 	float: right; 
 	
 }
+
+
+/*useradministration*/
+#usertable thead {
+	font-weight: bold;	
+}
+
+#usertable {
+	margin: 5px;
+	border: black solid 1px;
+}
+
+#usertable tbody {
+	background-color: #9dceff; 
+}
+

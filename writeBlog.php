@@ -40,17 +40,22 @@ if($edit) {
 			placeholder="enter your text here"><?php if($edit){ echo $blogEntry->text;}?></textarea>
 		<br> <br> <input type="submit" value="publish">
 	</form>
-</div>
 <?php
 
 if(isset($_POST['text']) && isset($_POST['heading'])) {
+	echo "<div class='successinfo'>";
 	if($success){
-		echo "publishing successful
+		echo "  <div class='successinfo' id='successful'>
+				publishing successful
 				<br>
 				<a href='.'>back</a>
 				";
 	} else {
-		echo "publishing unsuccessful";
+		echo "<div class='successinfo' id='unsuccessful'>
+		publishing unsuccessful";
 	}
-	
+	echo "</div>";
 }
+?>
+</div>
+</html>

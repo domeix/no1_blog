@@ -108,7 +108,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	 * @return all users in an array starting with 1!
 	 */
 	function getAllUsersArray() {
-		$result = $this->db->query("SELECT userID, username FROM user ORDER BY userID ASC;");
+		$result = $this->db->query("SELECT userID, username FROM user WHERE active ORDER BY userID ASC;");
 		
 		$allusersArr = ["definitly no user!!"];
 		while ($row = mysqli_fetch_assoc($result)) {
@@ -126,8 +126,12 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	 * @return string username
 	 */
 	function getUsername($userID) {
-		$result = $this->query("SELECT username FROM user WHERE userID LIKE '$userID';");
-		return mysqli_fetch_object($result)->username;
+		return $this->getUserdata($userID)->username;
+	}
+	
+	function getUserdata($userID) {
+		$result = $this->query("SELECT * FROM user WHERE userID LIKE '$userID' AND active;");
+		return mysqli_fetch_object($result);
 	}
 	
 	/**
@@ -232,25 +236,15 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 		if($edit) {
 			$oldBlogEntry = $this->getBlogEntry($blogEntryID);
-			echo $oldBlogEntry->heading . $oldBlogEntry->text;
-			echo "<br>"
-					
-			
-			
-			##------------------------FEEEEEHELER
-			
-			;
 			if($heading==$oldBlogEntry->heading && $text==$oldBlogEntry->text) {
-				echo "hier";
 				$success = false;				
-			}else{}
-			echo "hallo";
+			}else{
 				$success = $this->copyBlogEntry($blogEntryID);
 				
 				if($success) {
 					$success = $this->query("UPDATE blogentries SET heading = '$heading', text = '$text' WHERE blogEntryID LIKE '$blogEntryID' AND active;");
 				}
-				
+			}	
 		} else {
 			
 			$blogEntryID = $this->getNextIndex("blogentries");
@@ -284,9 +278,14 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	}
 	
 	
+	function createNewUser($username, $password, $email){
+		
+		$userID = $this->getNextIndex("user");
+		$pw5 = md5($password);
+		
+		return $this->query("INSERT INTO user (userID, username, password, email) VALUES ('$userID', '$username', '$pw5', '$email');");
 	
-	
-	
+	}
 	
 	
 	
