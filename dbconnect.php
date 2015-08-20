@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS `blog`.`blogentries` (
   `creationDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
   `modificationDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
   `hasComment` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '',
+  `imageID` INT NOT NULL DEFAULT NULL COMMENT '',
   PRIMARY KEY (`rowID`)  COMMENT '',
   INDEX `username_idx` (`userID` ASC)  COMMENT '')
 ENGINE = InnoDB;
@@ -77,9 +78,10 @@ CREATE TABLE IF NOT EXISTS `blog`.`comments` (
   `userID` INT NOT NULL COMMENT '',
   `active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '',
   `modificationDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
+  `creationDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
+  PRIMARY KEY (`rowID`)  COMMENT '',
   INDEX `userid_idx` (`userID` ASC)  COMMENT '',
-  INDEX `blogentryID_idx` (`blogEntryID` ASC)  COMMENT '',
-  PRIMARY KEY (`rowID`)  COMMENT '')
+  INDEX `blogentryID_idx` (`blogEntryID` ASC)  COMMENT '')
 ENGINE = InnoDB;
 
 
@@ -88,10 +90,21 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `blog`.`indices` (
   `id` INT NOT NULL COMMENT '',
-  `nextUserID` INT NULL COMMENT '',
-  `nextBlogEntryID` INT NULL COMMENT '',
-  `nextCommentID` INT NULL COMMENT '',
+  `nextuserID` INT(11) NULL DEFAULT NULL COMMENT '',
+  `nextblogentriesID` INT NULL COMMENT '',
+  `nextcommentsID` INT NULL COMMENT '',
+  `nextimageID` INT(11) NULL DEFAULT NULL COMMENT '',
   PRIMARY KEY (`id`)  COMMENT '')
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `blog`.`images`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `blog`.`images` (
+  `imageID` INT(11) NOT NULL AUTO_INCREMENT COMMENT '',
+  `image` MEDIUMTEXT NULL COMMENT '',
+  PRIMARY KEY (`imageID`)  COMMENT '')
 ENGINE = InnoDB;
 
 
