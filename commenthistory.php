@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Bloghistory</title>
-<base href="//localhost/No1_Blog/">
+<base href="//<?php echo $_SERVER['HTTP_HOST'] ?>/No1_Blog/">
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 

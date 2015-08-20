@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Read our blogs!</title>
-<base href="//localhost/No1_Blog/">
+<base href="//<?php echo $_SERVER['HTTP_HOST'] ?>/No1_Blog/">
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 
@@ -90,10 +90,22 @@ while($row = mysqli_fetch_object($result)) {
 					echo "<a href='writeBlog/blogEntryID/$blogEntryID' class='aBlogEdit'>edit</a>";
 				}
 				echo "
-				<p class='pComBut'><a href='comment/blogEntryID/$blogEntryID/selectedUserID/$selectedUserID' class='aComBut'>comment</a>
-
+				<p class='pComBut'><a href='comment/blogEntryID/$blogEntryID/selectedUserID/$selectedUserID' class='aComBut'>comment</a></p>
 				";
 	
+				#-------
+				# Images
+				if($row->imageID != 0) {
+					$image = $oDB->getImage($row->imageID);
+					$src = "data:image/jpg;base64,$image";
+					echo "<a href='$src'><img class='blogImage' src='$src'></a>";
+				}
+				#------------------------------------------------
+				
+				
+				
+				
+				
 				if($hasComment) {
 					$result2 = $oDB->query("SELECT * FROM comments WHERE blogEntryID LIKE '$blogEntryID' AND active ORDER BY commentID ASC;");
 					echo "<details>";

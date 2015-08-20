@@ -54,6 +54,8 @@ aside {
 	
 	font-family: sans-serif;
 	
+	width: 10%;
+	min-width: 50px;
 }
 
 aside input {
@@ -120,6 +122,12 @@ article h4 {
 article p {
 	margin-top: 0px;
 	margin-bottom: 5px;
+}
+
+.blogImage {
+	margin: 5px;
+	height: 150px;
+	width: auto;
 }
 
 .pComBut {

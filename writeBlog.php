@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Write your own blog!</title>
-<base href="//localhost/No1_Blog/">
+<base href="//<?php echo $_SERVER['HTTP_HOST'] ?>/No1_Blog/">
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 
@@ -22,22 +22,36 @@ if(isset($_GET['blogEntryID'])) {
 
 }
 
+
 if(isset($_POST['text']) && isset($_POST['heading'])) {
-	$success = $oDB->saveBlogEntry($_POST['heading'], $_POST['text'], $edit, $blogEntryID);
+	$success = false;
 	
+	$image = false;
+	if($_FILES['image']['tmp_name'] != "") {
+		$image = file_get_contents ($_FILES['image']['tmp_name']);
+		$image = base64_encode($image);
+	}
+	
+	if($_POST['text']!="" && $_POST['heading'] != "") {
+		$success = $oDB->saveBlogEntry($_POST['heading'], $_POST['text'], $edit, $blogEntryID, $image);
+	}
 }	
 if($edit) {
 	$blogEntry = $oDB->getBlogEntry($blogEntryID);
 }
 ?>
 <div class='writingarea'>
-	<form method="post">
+	<form method="post" enctype="multipart/form-data">
 		<input type="text" style="width: 600px; margin-bottom: 5px;"
 			name="heading" placeholder="heading" autocomplete="off"
 			<?php if($edit){ echo 'value="'.$blogEntry->heading.'"';}?>><br>
 		<textarea name="text"
 			style="width: 600px; height: 300px; margin-bottom: 5px;"
 			placeholder="enter your text here"><?php if($edit){ echo $blogEntry->text;}?></textarea>
+		<br>
+		<label for="image">image: </label>
+		<input type="file" name="image">	
+			
 		<br> <br> <input type="submit" value="publish">
 	</form>
 <?php
@@ -55,6 +69,8 @@ if(isset($_POST['text']) && isset($_POST['heading'])) {
 		publishing unsuccessful";
 	}
 	echo "</div>";
+	
+
 }
 ?>
 </div>

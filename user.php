@@ -2,24 +2,26 @@
 <html>
 <head>
 <title>User-Administration</title>
-<base href="//localhost/No1_Blog/">
+<base href="//<?php echo $_SERVER['HTTP_HOST'] ?>/No1_Blog/">
 <link rel="stylesheet" href="stylesheet.css">
 </head>
-
+<body>
 <aside>
 <p id='refresh'>۞ <a href='user'>refresh page</a></p>
 <p id='back'><a href='.'>home</a></p>
 <p class='plogout'><a href='./logout' class='alogout'>Logout</a></p>
 </aside>
 
-
+<?php
+echo "
+<main>
 <table>
 <thead>
 <tr>
 </table>
+";
 
 
-<?php
 session_start();
 if(!isset($_SESSION['currentUser'])) {
 	header('location: .');
@@ -49,7 +51,7 @@ $edit = false;
 if(isset($_GET['editUserID'])) {
 	$edit = true;
 	$editUserID = $_GET['editUserID'];
-	$editUser = $oDB->getUserdata($editUserID);
+	$editUser = $oDB->getUserdataByID($editUserID);
 }
 #--------------------------------
 $delete = false;
@@ -79,7 +81,7 @@ echo "<table id = 'usertable'>
 
 
 foreach ($allUsernames as $username) {
-	$thisUser = $oDB->getUserdataFromName($username);
+	$thisUser = $oDB->getUserdataByName($username);
 	$userID = $thisUser->userID;
 	$email = $thisUser->email;
 	$modificationDate = $thisUser->modificationDate;
@@ -141,14 +143,15 @@ foreach ($allUsernames as $username) {
 <?php 
 if(isset($success)) {
 	if($success) {
-		echo "<p>saving successful</p>";
+		echo "<div class='successinfo' id='successful'>saving successful</div>";
 	} else {
-		echo "<p>saving unsuccessful</p>";
+		echo "<div class='successinfo' id='unsuccessful'>saving unsuccessful</div>";
 	}
 	
 }
-?>
-
+echo "
+</main>
+</body>
 </html>
 
-
+";

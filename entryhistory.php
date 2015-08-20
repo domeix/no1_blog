@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Bloghistory</title>
-<base href="//localhost/No1_Blog/">
+<base href="//<?php echo $_SERVER['HTTP_HOST'] ?>/No1_Blog/">
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 
@@ -34,6 +34,7 @@ while($row = mysqli_fetch_object($result)) {
 	$heading = $row->heading;
 	$creationDate = $row->creationDate;
 	$modificationDate = $row->modificationDate;
+	$imageID = $row->imageID;
 	
 	//Blogentries
 	echo" <article>
@@ -42,9 +43,22 @@ while($row = mysqli_fetch_object($result)) {
 	if($modificationDate!=$creationDate) {
 		echo ", modificated: $modificationDate";
 	}
-	echo"	</p>	<p class='blogentries'>$text</p>
-	</article>
+	echo"	</p>	<p class='blogentries'>$text</p>";
+	
+	
+	#-------
+	# Images
+	if($imageID != 0) {
+		$image = $oDB->getImage($row->imageID);
+		$src = "data:image/jpg;base64,$image";
+		echo "<a href='$src'><img class='blogImage' src='$src'></a>";
+	}
+	#------------------------------------------------
+	
+	echo "</article>
 	";
+	
+	
 	
 }
 

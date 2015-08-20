@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Comment this blog</title>
-<base href="//localhost/No1_Blog/">
+<base href="//<?php echo $_SERVER['HTTP_HOST'] ?>/No1_Blog/">
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 
@@ -59,19 +59,20 @@ if ($edit) {
 </textarea>
 		<br> <br> <input type="submit" value="save">
 	</form>
-</div>
+
 <?php 
 if(isset($_POST['comment'])) {
 	if($success){
-		echo "saving successful
+		echo "<div class='successinfo' id='successful'>
+				saving successful
 				<br>
 				<a href='./blogs/selectedUserID/$selectedUserID'>back</a>
-				";
+				</div>";
 	} else {
-		echo "saving unsuccessful";
+		echo "<div class='successinfo' id='unsuccessful'>saving unsuccessful</div>";
 	}
 
 }
 
 
-?>
+?></div>

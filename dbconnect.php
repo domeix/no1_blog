@@ -4,6 +4,7 @@ class DBconnect {
 	
 	function __construct() {
 		$this->db = mysqli_connect("localhost", "dominik", "1234", "blog") or die("Error " . mysqli_error($db));
+		mysqli_set_charset($this->db, "UTF-8");
 	}
 	
 	function query($string) {
@@ -241,25 +242,31 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 		return $success;
 	}
 	
-	function saveBlogEntry($heading, $text, $edit, $blogEntryID) {
+	function saveBlogEntry($heading, $text, $edit, $blogEntryID, $image) {
 		$userID = $_SESSION['currentUserID'];
+		
+		$imageID = 0;
+		if($image != false){
+			$imageID = $this->getNextIndex("image");
+			$this->saveImage($imageID, $image);
+		}
 
 		if($edit) {
 			$oldBlogEntry = $this->getBlogEntry($blogEntryID);
-			if($heading==$oldBlogEntry->heading && $text==$oldBlogEntry->text) {
+			if($heading==$oldBlogEntry->heading && $text==$oldBlogEntry->text && $imageID==$oldBlogEntry->imageID) {
 				$success = false;				
 			}else{
 				$success = $this->copyBlogEntry($blogEntryID);
 				
 				if($success) {
-					$success = $this->query("UPDATE blogentries SET heading = '$heading', text = '$text' WHERE blogEntryID LIKE '$blogEntryID' AND active;");
+					$success = $this->query("UPDATE blogentries SET heading = '$heading', text = '$text', imageID = '$imageID' WHERE blogEntryID LIKE '$blogEntryID' AND active;");
 				}
 			}	
 		} else {
 			
 			$blogEntryID = $this->getNextIndex("blogentries");
 			
-			$success = $this->query("INSERT INTO blogentries (blogEntryID, heading, text, userID)  VALUES ('$blogEntryID', '$heading', '$text', '$userID');");
+			$success = $this->query("INSERT INTO blogentries (blogEntryID, heading, text, userID, imageID)  VALUES ('$blogEntryID', '$heading', '$text', '$userID', '$imageID');");
 		}
 		
 		return $success;
@@ -272,6 +279,18 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	function getBlogEntry($blogEntryID) {
 		$result = $this->query("SELECT * FROM blogentries WHERE blogEntryID LIKE '$blogEntryID' AND active;");
 		return mysqli_fetch_object($result);
+	}
+	
+	
+	function getImage($imageID) {
+		$result = $this->query("SELECT image FROM images WHERE imageID LIKE '$imageID';");
+		return mysqli_fetch_object($result)->image;
+	}
+	
+	function saveImage($imageID, $image) {
+		$this->query("INSERT INTO images (imageID, image) VALUES ('$imageID', '$image')");
+		
+		
 	}
 	
 	/**
@@ -289,10 +308,26 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	
 	
 	function createNewUser($userID, $username, $password, $email){
-		
+
+		#-----------
+		#if $userID is already set -> creation of updated copy
+		# !isset() --> new user
 		if(!isset($userID)) {
+			
+			#-------------
+			# if name already exists -> error
+			$allusernames = $this->getAllUsernamesArray();
+			foreach($allusernames as $testuser) {
+				if($testuser == $username) {
+					return false;
+				}
+			}
+				
+			#----------
+			# if name is new
 			$userID = $this->getNextIndex("user");
 		}
+
 		$pw5 = md5($password);
 		
 		return $this->query("INSERT INTO user (userID, username, password, email) VALUES ('$userID', '$username', '$pw5', '$email');");
@@ -300,7 +335,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	
 	function updateUser($userID, $username, $password, $email) {
 		if($password == "") {
-			$password = $this->getUserdata($userID)->password;
+			$password = $this->getUserdataByID($userID)->password;
 		}
 		$success = $this->deactivateUser($userID);
 		if($success) {
