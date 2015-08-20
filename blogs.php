@@ -23,25 +23,26 @@ echo "<header id='user'>
 require_once 'dbconnect.php';
 $oDB = new DBconnect();
 
-$allusersArr = $oDB->getAllUsersArray();
+$allusernames = $oDB->getAllUsernamesArray();
 
 #---------------------------
 # navigation bar
 #---------------------------
 echo "<aside>";
 
-$i=1;
-while(isset($allusersArr[$i])) {
+
+foreach ($allusernames as $username) {
+	$userID = $oDB->getUserID($username);
+	
 	echo "
-		<p class='pBlog'><a href='./blogs/selectedUserID/$i' class='aBlog'>".$allusersArr[$i]."</a></p>
+		<p class='pBlog'><a href='./blogs/selectedUserID/$userID' class='aBlog'>$username</a></p>
 		";
-	$i++;
 }
 
-echo "	<p><a href='./writeBlog'>Blog schreiben</a></p>
-		<p><a href=''>anderer Link</a></p>	
-		<p>noch mehr Links</p>
-		<p>weitere Links</p>
+echo "	<p><a href='./writeBlog'>Blog<br>schreiben</a></p>
+		<p><a href=''>anderer<br>Link</a></p>	
+		<p>noch mehr<br>Links</p>
+		<p><a href='user'>☺ user ☺<br>administration</a></p>
 		<p class='plogout'><a href='./logout' class='alogout'>Logout</a></p>
 			
 	</aside>";
@@ -57,7 +58,7 @@ if(isset($_GET['selectedUserID'])) {
 	$selectedUserID = $_SESSION['currentUserID'];
 }
 
-$selectedUserName = $allusersArr[$selectedUserID];
+$selectedUserName = $oDB->getUsername($selectedUserID);
 
 
 echo "<main>

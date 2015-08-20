@@ -107,18 +107,18 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	/**
 	 * @return all users in an array starting with 1!
 	 */
-	function getAllUsersArray() {
-		$result = $this->db->query("SELECT userID, username FROM user WHERE active ORDER BY userID ASC;");
+	function getAllUsernamesArray() {
+		$result = $this->db->query("SELECT username FROM user WHERE active ORDER BY userID ASC;");
 		
-		$allusersArr = ["definitly no user!!"];
-		while ($row = mysqli_fetch_assoc($result)) {
-			array_push($allusersArr, $row['username']);
-		}
-		
-		if(!isset($allusersArr[1])) {
+		if(!$result) {
 			die ("No users in database.");
 		}
 		
+		$allusersArr = array();
+		while ($row = mysqli_fetch_object($result)) {
+			array_push($allusersArr, $row->username);
+		}		
+	
 		return $allusersArr;
 	}
 	/**
@@ -126,12 +126,22 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	 * @return string username
 	 */
 	function getUsername($userID) {
-		return $this->getUserdata($userID)->username;
+		$result = $this->query("SELECT username FROM user WHERE userID LIKE '$userID';");
+		return mysqli_fetch_object($result)->username;
 	}
 	
-	function getUserdata($userID) {
-		$result = $this->query("SELECT * FROM user WHERE userID LIKE '$userID' AND active;");
+	function getUserID($username) {
+		return $this->getUserdataByName($username)->userID;
+	}
+	
+	function getUserdataByName($username) {
+		$result = $this->query("SELECT * FROM user WHERE username LIKE '$username' AND active;");
 		return mysqli_fetch_object($result);
+	}
+	
+	
+	function getUserdataByID($userID) {
+		return $this->getUserdataByName($this->getUsername($userID));
 	}
 	
 	/**
@@ -278,15 +288,35 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 	}
 	
 	
-	function createNewUser($username, $password, $email){
+	function createNewUser($userID, $username, $password, $email){
 		
-		$userID = $this->getNextIndex("user");
+		if(!isset($userID)) {
+			$userID = $this->getNextIndex("user");
+		}
 		$pw5 = md5($password);
 		
 		return $this->query("INSERT INTO user (userID, username, password, email) VALUES ('$userID', '$username', '$pw5', '$email');");
-	
 	}
 	
+	function updateUser($userID, $username, $password, $email) {
+		if($password == "") {
+			$password = $this->getUserdata($userID)->password;
+		}
+		$success = $this->deactivateUser($userID);
+		if($success) {
+			$success = $this->createNewUser($userID, $username, $password, $email);
+		}
+		
+		return $success;		
+	}
+	
+	function deleteUser($userID) {
+		return $this->deactivateUser($userID);
+	}
+	
+	private function deactivateUser($userID) {
+		return $this->query("UPDATE user SET active=0 WHERE userID LIKE '$userID' AND active;");		
+	}
 	
 	
 	

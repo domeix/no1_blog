@@ -39,9 +39,10 @@
 
 require_once 'dbconnect.php';
 $oDB = new DBconnect();
-$users = $oDB->getAllUsersArray();
-array_shift($users);
-echo "The users are: " . implode(", ", $users);
+$usernames = $oDB->getAllUsernamesArray();
+
+
+echo "The users are: " . implode(", ", $usernames);
 
 
 if(isset($_POST["username"]) && isset($_POST["password"])) {

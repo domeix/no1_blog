@@ -12,12 +12,14 @@ require_once 'dbconnect.php';
  */
 function login($username, $password) {
 	$oDB = new DBconnect();
-	$result = $oDB->query("SELECT * FROM user WHERE username LIKE '$username';");
+	$result = $oDB->query("SELECT * FROM user WHERE username LIKE '$username' AND active;");
 	$resObj = mysqli_fetch_object($result);
 	
-	if(!isset($resObj->password)) {
+	if(!isset($resObj->password)) { //DB-connection error
 		return false;
 	}
+	
+	echo "<br>".$resObj->password."<br>".md5($password)."<br>";
 	
 	if(md5($password)==$resObj->password){
 		session_start();

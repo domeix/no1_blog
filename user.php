@@ -6,6 +6,13 @@
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 
+<aside>
+<p id='refresh'>۞ <a href='user'>refresh page</a></p>
+<p id='back'><a href='.'>home</a></p>
+<p class='plogout'><a href='./logout' class='alogout'>Logout</a></p>
+</aside>
+
+
 <table>
 <thead>
 <tr>
@@ -20,31 +27,41 @@ if(!isset($_SESSION['currentUser'])) {
 require_once 'dbconnect.php';
 $oDB = new DBconnect();
 
-$edit = false;
-if(isset($_POST['editUserID'])) {
-	$edit = true;
-	$editUserID = $_POST['editUserID'];
-	$editUser = $oDB->getUserdata($editUserID);
-}
-
-
 #------------------------------
-# Create new user
+# Create new user, edit old ones
 
 if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email'])) {
 	
 	$success = false;
 	
-	if($_POST['username'] != "" && $_POST['password'] != "" && $_POST['email'] != "") {
-		$success = $oDB->createNewUser($_POST['username'], $_POST['password'], $_POST['email']);
+	if(isset($_POST['editUserID'])) {		//editing user
+		$success = $oDB->updateUser($_POST['editUserID'], $_POST['username'], $_POST['password'], $_POST['email']);		
+		
+	} else {								//creating user
+		if($_POST['username'] != "" && $_POST['password'] != "" && $_POST['email'] != "") {
+			$success = $oDB->createNewUser(NULL, $_POST['username'], $_POST['password'], $_POST['email']);
+		}
 	}
-	
 }
 
 #-------------------------------
+$edit = false;
+if(isset($_GET['editUserID'])) {
+	$edit = true;
+	$editUserID = $_GET['editUserID'];
+	$editUser = $oDB->getUserdata($editUserID);
+}
+#--------------------------------
+$delete = false;
+if(isset($_GET['delUserID'])) {
+	$delete = true;
+	$delUserID = $_GET['delUserID'];
+	
+	$delSuccess = $oDB->deleteUser($delUserID);
+}
+#--------------------------------
 
-
-$allUsersArr = $oDB->getAllUsersArray();
+$allUsernames = $oDB->getAllUsernamesArray();
 
 echo "<table id = 'usertable'>
 		<thead>
@@ -54,20 +71,22 @@ echo "<table id = 'usertable'>
 				<td>email</td>
 				<td>modificationDate</td>
 				<td></td>
+				<td></td>
 			</tr>
 		</thead>
 		<tbody>
 		";
 
-$userID=1;
-while(isset($allUsersArr[$userID])) {
-	$thisUser = $oDB->getUserdata($userID);
-	$username = $allUsersArr[$userID];
+
+foreach ($allUsernames as $username) {
+	$thisUser = $oDB->getUserdataFromName($username);
+	$userID = $thisUser->userID;
 	$email = $thisUser->email;
 	$modificationDate = $thisUser->modificationDate;
 	
 	echo "<tr><td>$userID</td><td>$username</td><td>$email</td><td>$modificationDate</td>
-		<td><a href='user/editUserID/$userID'>edit</a></td>
+		<td><a href='user/editUserID/$userID'>- edit -</a></td>
+		<td><a href='user/delUserID/$userID'>delete</a></td>
 	</tr>";
 	$userID++;
 }
@@ -75,14 +94,14 @@ while(isset($allUsersArr[$userID])) {
 ?>
 
 <form method='POST'>
-<table>
+<?php if($edit) {echo"<input type='hidden' name='editUserID' value='$editUserID'>"; }?>
+<table id="usertableIn">
 	<tbody>
 		<tr>
-			<th>
+			<th colspan="2" align="left">
 			<?php
 			if($edit) {
-				echo "Edit user $editUserID
-				<input type='hidden' name='userID' value='$editUserID'>";
+				echo "Edit user #$editUserID";
 			} else {
 				echo "Create a new user";
 			}
@@ -91,25 +110,25 @@ while(isset($allUsersArr[$userID])) {
 		<tr>
 			<td>Username</td>
 			<td><input	type="text" name="username" autocomplete="off"
-			<?php if($edit){echo "value='" . $editUser->username . "'" ?>
+			<?php if($edit){echo "value='" . $editUser->username . "'";} ?>
 			></td>
 		</tr>
 		<tr>
 			<td>Password</td>
 			<td><input type="text" name="password" autocomplete="off"
-			<?php if($edit){echo "placeholder='no change'" ?>
+			<?php if($edit){echo "placeholder='no change'";} ?>
 			></td>
 		</tr>
 		<tr>
 			<td>Email</td>
 			<td><input type="email" name="email" autocomplete="off"
-			<?php if($edit){echo "value='" . $editUser->email . "'" ?>
+			<?php if($edit){echo "value='" . $editUser->email . "'" ;}?>
 			></td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2" align="left">
 			<input type="submit" 
-			<?php if($edit){echo "value='Edit user $editUserID'";} 
+			<?php if($edit){echo "value='Edit user #$editUserID'";} 
 			else {echo "value='Create user'";} ?>			
 			></td>
 		</tr>
@@ -118,16 +137,18 @@ while(isset($allUsersArr[$userID])) {
 </form>
 
 
+
 <?php 
 if(isset($success)) {
 	if($success) {
-		echo "saving successful";
+		echo "<p>saving successful</p>";
 	} else {
-		echo "saving unsuccessful";
+		echo "<p>saving unsuccessful</p>";
 	}
 	
 }
 ?>
+
 </html>
 
 

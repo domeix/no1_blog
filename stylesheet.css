@@ -63,9 +63,9 @@ aside input {
 
 aside p {
 	background-color: #D7D7D7;
-	width: 70px;
+	width: auto;
 	text-align: center;
-	padding: 8px 1px;
+	padding: 8px 3px;
 	
 }
 
@@ -189,14 +189,20 @@ article p {
 /*useradministration*/
 #usertable thead {
 	font-weight: bold;	
+	background-color: #c0c0c0;
+	
 }
 
 #usertable {
 	margin: 5px;
 	border: black solid 1px;
+	padding: 2px;
 }
 
 #usertable tbody {
 	background-color: #9dceff; 
 }
 
+#usertableIn {
+	font-family: fantasy;
+}
