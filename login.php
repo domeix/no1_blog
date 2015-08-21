@@ -54,8 +54,7 @@ if(isset($_POST["username"]) && isset($_POST["password"])) {
 		echo "please check your login";
 	}
 	
-	
-	
-	
-	
 }
+
+
+echo "<p>We use PHP " . phpversion() . "</p>";

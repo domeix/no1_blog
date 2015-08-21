@@ -15,7 +15,7 @@ class DBconnect {
 	 * creates Database as designed in mysqlWorkspace
 	 * 19.08.15 - 11.00
 	 */		
- 	function createDatabase() {
+ 	function createDatabase($dbname) {
 		
 		$this->query("
 -- MySQL Workbench Forward Engineering
@@ -25,19 +25,19 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema blog
+-- Schema $dbname
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema blog
+-- Schema $dbname
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `blog` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
-USE `blog` ;
+CREATE SCHEMA IF NOT EXISTS `$dbname` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `$dbname` ;
 
 -- -----------------------------------------------------
--- Table `blog`.`user`
+-- Table `$dbname`.`user`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `blog`.`user` (
+CREATE TABLE IF NOT EXISTS `$dbname`.`user` (
   `rowID` INT NOT NULL AUTO_INCREMENT COMMENT '',
   `userID` INT NOT NULL COMMENT '',
   `active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '',
@@ -49,9 +49,9 @@ CREATE TABLE IF NOT EXISTS `blog`.`user` (
 
 
 -- -----------------------------------------------------
--- Table `blog`.`blogentries`
+-- Table `$dbname`.`blogentries`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `blog`.`blogentries` (
+CREATE TABLE IF NOT EXISTS `$dbname`.`blogentries` (
   `rowID` INT NOT NULL AUTO_INCREMENT COMMENT '',
   `blogEntryID` INT NOT NULL COMMENT '',
   `active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '',
@@ -68,9 +68,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `blog`.`comments`
+-- Table `$dbname`.`comments`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `blog`.`comments` (
+CREATE TABLE IF NOT EXISTS `$dbname`.`comments` (
   `rowID` INT NOT NULL AUTO_INCREMENT COMMENT '',
   `commentID` INT NOT NULL COMMENT '',
   `blogEntryID` INT NOT NULL COMMENT '',
@@ -81,14 +81,14 @@ CREATE TABLE IF NOT EXISTS `blog`.`comments` (
   `creationDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
   PRIMARY KEY (`rowID`)  COMMENT '',
   INDEX `userid_idx` (`userID` ASC)  COMMENT '',
-  INDEX `blogentryID_idx` (`blogEntryID` ASC)  COMMENT '')
+  INDEX `blogEntryID_idx` (`blogEntryID` ASC)  COMMENT '')
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `blog`.`indices`
+-- Table `$dbname`.`indices`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `blog`.`indices` (
+CREATE TABLE IF NOT EXISTS `$dbname`.`indices` (
   `id` INT NOT NULL COMMENT '',
   `nextuserID` INT(11) NULL DEFAULT NULL COMMENT '',
   `nextblogentriesID` INT NULL COMMENT '',
@@ -99,9 +99,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `blog`.`images`
+-- Table `$dbname`.`images`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `blog`.`images` (
+CREATE TABLE IF NOT EXISTS `$dbname`.`images` (
   `imageID` INT(11) NOT NULL AUTO_INCREMENT COMMENT '',
   `image` MEDIUMTEXT NULL COMMENT '',
   PRIMARY KEY (`imageID`)  COMMENT '')
