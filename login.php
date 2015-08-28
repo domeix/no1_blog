@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Login to read our blogs!</title>
-<base href="//<?php echo $_SERVER['HTTP_HOST'] ?>/No1_Blog/">
+<base href="//<?php echo $_SERVER['HTTP_HOST'] ?>">
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 
@@ -51,7 +51,7 @@ if(isset($_POST["username"]) && isset($_POST["password"])) {
 	if(login($_POST["username"],$_POST["password"])) {	//logindata correct
 		header("location:main");
 	} else {											//logindata wrong
-		echo "please check your login";
+		echo "<br>please check your login";
 	}
 	
 }

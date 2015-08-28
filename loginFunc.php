@@ -19,7 +19,7 @@ function login($username, $password) {
 		return false;
 	}
 	
-	echo "<br>".$resObj->password."<br>".md5($password)."<br>";
+#	echo "<br>".$resObj->password."<br>".md5($password)."<br>";
 	
 	if(md5($password)==$resObj->password){
 		session_start();

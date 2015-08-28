@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Comment this blog</title>
-<base href="//<?php echo $_SERVER['HTTP_HOST'] ?>/No1_Blog/">
+<base href="//<?php echo $_SERVER['HTTP_HOST'] ?>">
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 

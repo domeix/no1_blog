@@ -255,6 +255,21 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 		return $success;
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	function saveBlogEntry($heading, $text, $edit, $blogEntryID, $image) {
 		$userID = $_SESSION['currentUserID'];
 		
@@ -284,6 +299,18 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 		
 		return $success;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * @param int $blogEntryID
